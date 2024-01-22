@@ -11,7 +11,7 @@ export default function Cadastro() {
         <div className="h-screen flex items-center justify-center">
             <div className="flex flex-col items-center justify-center shadow-md h-3/4 w-3/4 xl:w-1/2 bg-gray-300 rounded-lg">
                 <h1 className="text-lg sm:text-xl">🥳Cadastre-se aqui</h1>
-                <form action="" className="w-3/4 mt-2">
+                <form action="" className="flex flex-col w-3/4">
                     <AuthInput
                         label="E-mail" 
                         tipo="email"
@@ -26,6 +26,7 @@ export default function Cadastro() {
                         valor={senha}
                         obrigatorio
                     ></AuthInput>
+                    <button className="bg-green-500 hover:bg-green-400 duration-150 rounded-lg p-3 mt-4 justify-self-end font-bold">Cadastrar</button>
                 </form>
             </div>
         </div>

@@ -1,7 +1,7 @@
 import Header from "@/components/template/Header";
 import Footer from "@/components/template/Footer";
 import Content from "@/components/template/Content";
-import Image from "next/image";
+
 
 export default function Home() {
   return (
