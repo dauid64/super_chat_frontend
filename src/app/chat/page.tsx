@@ -5,18 +5,20 @@ import ContactsList from "@/components/Contacts/ContactsList";
 import Content from "@/components/template/Content";
 import Footer from "@/components/template/Footer";
 import Header from "@/components/template/Header";
+import SuperChat from "@/components/chat/SuperChat";
 import { useState } from "react";
 
 export default function Chat() {
-    const [ContactListClose, setContactListClose] = useState(false)
+    const [ContactListClose, setContactListClose] = useState(true)
 
     return (
-        <div className="flex flex-col h-screen">
-        <Header></Header>
-            <Content>
-                <ContactsList onClick={setContactListClose} fechado={ContactListClose}></ContactsList>
-            </Content>
-        <Footer></Footer>
-    </div>
+        <>
+            <Header></Header>
+                <Content>
+                    <ContactsList onClick={setContactListClose} fechado={ContactListClose}></ContactsList>
+                    <SuperChat listaContatosFechado={ContactListClose}></SuperChat>
+                </Content>
+            <Footer></Footer>
+        </>
     )
 }

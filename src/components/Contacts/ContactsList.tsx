@@ -34,13 +34,13 @@ export default function ContactsList(props: ContatcsListProps) {
     function renderizaListaDeContatos() {
         if (props.fechado) {
             return (
-                <div className="bg-indigo-300 w-10 rounded-r-lg mt-3 cursor-pointer" onClick={() => props.onClick(!props.fechado)}>
+                <div className="bg-indigo-300 w-10 rounded-r-lg mt-3 h-8 cursor-pointer duration-300" onClick={() => props.onClick(!props.fechado)}>
                     <MdOutlineSlideshow size={30} />
                 </div>
             )
         } else {
             return (
-            <div className="w-full md:w-1/4 h-full bg-indigo-300 rounded-r-lg">
+            <div className="w-full md:w-1/4 bg-indigo-300 rounded-r-lg duration-300">
                 <div className="flex justify-end pr-3 pt-1">
                     <button 
                     className="justify-self-end text-lg font-bold text-gray-950"

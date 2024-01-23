@@ -9,7 +9,7 @@ export default function Cadastro() {
 
     return (
         <div className="h-screen flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center shadow-md h-3/4 w-3/4 xl:w-1/2 bg-gray-300 rounded-lg">
+            <div className="flex flex-col items-center justify-center shadow-md h-3/4 w-3/4 xl:w-1/2 bg-gradient-to-b from-indigo-300 to-yellow-200 rounded-lg">
                 <h1 className="text-lg sm:text-xl">🥳Cadastre-se aqui</h1>
                 <form action="" className="flex flex-col w-3/4">
                     <AuthInput

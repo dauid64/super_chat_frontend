@@ -4,7 +4,7 @@ interface ContentProps {
 
 export default function Content(props) {
     return (
-        <div className="bg-slate-100 flex-grow">
+        <div className="bg-slate-100 flex-auto flex">
             {props.children}
         </div>
     )
