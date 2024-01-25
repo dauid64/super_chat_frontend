@@ -20,7 +20,7 @@ export default function SuperChat(props: ChatProps) {
                     <input 
                         type="text" 
                         placeholder="Mande sua mensagem..."
-                        className="w-full p-3 rounded-lg mb-10 self-end justify-self-center placeholder:text-xs"
+                        className="w-full p-3 rounded-lg mb-10 self-end justify-self-center placeholder:text-xs md:placeholder:text-base"
                         />
                 </div>
             </div>
