@@ -7,7 +7,7 @@ import { use, useEffect, useState } from "react";
 
 export default function ForceAuthenticate(props) {
     const pathname = usePathname()
-    const {push} = useRouter()
+    const router = useRouter()
     const [authenticated, setAuthenticated] = useState(true)
 
     const isPublicPage = checkIsPublicRoute(pathname)
@@ -16,15 +16,11 @@ export default function ForceAuthenticate(props) {
     useEffect(() => {
         const isAuthenticated = checkUserAuthenticated()
         setAuthenticated(isAuthenticated)
+
+        if (!isPublicPage && !isAuthenticated) {
+            router.push(APP_ROUTES.public.login)
+        }
     }, [])
 
-    useEffect(() => {
-        if (!authenticated) {
-            push(APP_ROUTES.public.login)
-        }
-    }, [authenticated, push])
-
-    if (isPublicPage || (!isPublicPage && authenticated)) {
-        return <>{props.children}</>
-    }
+    return <>{props.children}</>
 }
