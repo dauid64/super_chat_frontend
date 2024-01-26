@@ -1,13 +1,16 @@
 import { MdOutlineSlideshow } from "react-icons/md";
+import Cookies from 'js-cookie'
 
 interface ContatcsListProps {
     fechado: boolean
     onClick: (novoValor: boolean) => void
 }
 
+const BASE_URL_API = process.env.NEXT_PUBLIC_API_URL
+
 export default function ContactsList(props: ContatcsListProps) {
     const contatos = [{
-        nome: "joão Venancio",
+        email: "joão Venancio",
         idade: 17,
         pais: 'Brasil',
         photoUrl: 'https://img.freepik.com/fotos-gratis/close-no-homem-sorrindo-na-natureza_23-2150771075.jpg'
@@ -22,7 +25,7 @@ export default function ContactsList(props: ContatcsListProps) {
                             <img src={contato.photoUrl} className="w-10 h-10 lg:w-16 lg:h-16 rounded-full" />
                         </div>
                         <ul className="ml-3">
-                            <li className="text-xs lg:text-sm" >Nome: {contato.nome}</li>
+                            <li className="text-xs lg:text-sm" >Nome: {contato.email}</li>
                             <li className="text-xs lg:text-sm">Idade: {contato.idade}</li>
                             <li className="text-xs lg:text-sm">País: {contato.pais}</li>
                         </ul>
