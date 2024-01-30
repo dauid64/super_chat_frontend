@@ -14,7 +14,6 @@ type LoginData = {
 }
 
 type AuthContextProps = {
-    isAuthenticated: boolean
     user: User
     login: (data: LoginData) => Promise<string>
 }
@@ -27,7 +26,6 @@ const AuthContext = createContext<AuthContextProps>({} as AuthContextProps)
 export function AuthProvider(props) {
     const router = useRouter()
     const [user, setUser] = useState<User | null>(null)
-    const isAuthenticated = !!user
 
     async function login(data: LoginData): Promise<string> {
         const response = await fetch(BASE_URL_API + '/login', {
@@ -75,7 +73,7 @@ export function AuthProvider(props) {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login}}>
+        <AuthContext.Provider value={{ user, login}}>
             {props.children}
         </AuthContext.Provider>
     )

@@ -11,8 +11,6 @@ import useAuth from "@/data/hook/useAuth";
 
 export default function Chat() {
     const [ContactListClose, setContactListClose] = useState(true)
-    const { user } = useAuth()
-    console.log(user)
 
     return (
         <>
