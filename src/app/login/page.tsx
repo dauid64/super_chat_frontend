@@ -1,43 +1,32 @@
 "use client";
 
 import AuthInput from "@/components/auth/AuthInput"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
-import Cookies from 'js-cookie'
+import useAuth from "@/data/hook/useAuth";
 
 const BASE_URL_API = process.env.NEXT_PUBLIC_API_URL
 
 export default function Login() {
-    const router = useRouter()
+    const { login } = useAuth()
     const [erro, setErro] = useState(null)
     const [email, setEmail] = useState('')
-    const [senha, setPassword] = useState('')
+    const [password, setPassword] = useState('')
 
     function showErro(msg: String) {
         setErro(msg)
     }
 
-    async function login(e) {
+    async function handleLogin(e) {
         e.preventDefault()
-
-        const response = await fetch(BASE_URL_API + "/login", {
-            method: "POST",
-            body: JSON.stringify({
-                "email": email,
-                "password": senha
-            })
-        })
-
-        if (response.ok) {
-            setErro(null)
-            const data = await response.json()
-            Cookies.set("token", data.token, {
-                expires: 7/24
-            })
-            router.push("/chat")
-        } else {
-            const err = await response.json()
-            setErro(err.erro)
+        
+        const data = {
+            email,
+            password
+        }
+        const erro = await login(data)
+        console.log(erro)
+        if (erro !== '') {
+            showErro(erro)
         }
     }
 
@@ -55,7 +44,7 @@ export default function Login() {
                         <span className="ml-3">{erro}</span>
                     </div>
                 ) : null}
-                <form className="flex flex-col w-3/4" onSubmit={(e) => login(e)}>
+                <form className="flex flex-col w-3/4" onSubmit={(e) => handleLogin(e)}>
                     <AuthInput
                         label="E-mail" 
                         tipo="email"
@@ -67,7 +56,7 @@ export default function Login() {
                         label="Senha" 
                         tipo="password"
                         onChange={setPassword}
-                        valor={senha}
+                        valor={password}
                         obrigatorio
                     ></AuthInput>
                     <span className="text-gray-950 text-sm md:text-lg mt-2">Caso não tenha uma conta, <a className="text-blue-600 underline-offset-2 hover:text-blue-500 text-xs md:text-base" href="/cadastro">clique aqui!</a></span>

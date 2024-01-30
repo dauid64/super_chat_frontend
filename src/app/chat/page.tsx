@@ -7,9 +7,12 @@ import Footer from "@/components/template/Footer";
 import Header from "@/components/template/Header";
 import SuperChat from "@/components/chat/SuperChat";
 import { useEffect, useState } from "react";
+import useAuth from "@/data/hook/useAuth";
 
 export default function Chat() {
     const [ContactListClose, setContactListClose] = useState(true)
+    const { user } = useAuth()
+    console.log(user)
 
     return (
         <>

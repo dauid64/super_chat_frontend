@@ -10,7 +10,7 @@ export default function AuthInput(props: AuthInputProps) {
     return (
         <div className="flex flex-col">
             <label className="mt-4 font-bold text-lg">{props.label}</label>
-            <input 
+            <input
                 className="mt-2 p-3 rounded-lg w-full"
                 type={props.tipo} 
                 value={props.valor} 
