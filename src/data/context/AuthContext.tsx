@@ -80,7 +80,7 @@ export function AuthProvider(props) {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login, loading}}>
+        <AuthContext.Provider value={{ user, login, loading, setLoading}}>
             {props.children}
         </AuthContext.Provider>
     )
