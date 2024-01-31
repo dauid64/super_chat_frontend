@@ -14,8 +14,9 @@ type LoginData = {
 }
 
 type AuthContextProps = {
-    user: User
-    login: (data: LoginData) => Promise<string>
+    user?: User
+    loading?: boolean
+    login?: (data: LoginData) => Promise<string>
 }
 
 
@@ -24,10 +25,12 @@ const BASE_URL_API = process.env.NEXT_PUBLIC_API_URL
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps)
 
 export function AuthProvider(props) {
+    const [loading, setLoading] = useState(true)
     const router = useRouter()
     const [user, setUser] = useState<User | null>(null)
 
     async function login(data: LoginData): Promise<string> {
+        setLoading(true)
         const response = await fetch(BASE_URL_API + '/login', {
             method: 'POST',
             body: JSON.stringify(data)
@@ -45,6 +48,7 @@ export function AuthProvider(props) {
         setUser(user)
 
         router.push('/chat')
+        setLoading(false)
         return ''
     }
 
@@ -69,11 +73,14 @@ export function AuthProvider(props) {
             }
 
             fetchData()
+            setLoading(false)
+        } else {
+            setLoading(false)
         }
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login}}>
+        <AuthContext.Provider value={{ user, login, loading}}>
             {props.children}
         </AuthContext.Provider>
     )
