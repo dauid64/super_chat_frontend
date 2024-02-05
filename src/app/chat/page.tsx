@@ -17,6 +17,7 @@ export default function Chat() {
     const [contactListClose, setContactListClose] = useState(true)
     const [contactUser, setContactUser] = useState(null)
     const [messages, setMessages] = useState(null)
+    const [message, setMessage] = useState('')
 
     async function searchContactUser(id: number) {
         const token = Cookies.get('token')
@@ -36,6 +37,28 @@ export default function Chat() {
 
         const contactUser = await response.json()
         setContactUser(contactUser)
+    }
+
+    async function sendMessage() {
+        const token = Cookies.get('token')
+        const response = await fetch(BASE_URL_API + '/mensagens', {
+            method: 'POST',
+            body: JSON.stringify({
+                'text': message,
+                'toUserID': contactUser.ID,
+            }),
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        })
+
+        if (!response.ok) {
+            const responseObj = await response.json()
+            console.log(responseObj.erro)
+        }
+
+        setMessage('')
     }
 
     useEffect(() => {
@@ -64,7 +87,7 @@ export default function Chat() {
             <Header></Header>
                 <Content>
                     <ContactsList toggleContacts={setContactListClose} fechado={contactListClose} searchContactUser={searchContactUser}></ContactsList>
-                    <SuperChat listaContatosFechado={contactListClose} messages={messages} contactUser={contactUser}></SuperChat>
+                    <SuperChat listaContatosFechado={contactListClose} messages={messages} contactUser={contactUser} value={message} onChange={setMessage} sendMessage={sendMessage}></SuperChat>
                 </Content>
             <Footer></Footer>
         </>
