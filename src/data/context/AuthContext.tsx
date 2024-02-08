@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import axios from 'axios';
 
 type User = {
+    ID: number
     created_at: Date
     email: string
 }
