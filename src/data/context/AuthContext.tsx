@@ -18,6 +18,7 @@ type AuthContextProps = {
     user?: User
     loading?: boolean
     login?: (data: LoginData) => Promise<string>
+    setLoading: (loading: boolean) => void
 }
 
 

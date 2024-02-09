@@ -13,7 +13,7 @@ import useAuth from "@/data/hook/useAuth";
 const BASE_URL_API = process.env.NEXT_PUBLIC_API_URL
 
 export default function Chat() {
-    const { user } = useAuth()
+    const { user, setLoading } = useAuth()
     const [contactListClose, setContactListClose] = useState(true)
     const [contactUser, setContactUser] = useState(null)
     const [messages, setMessages] = useState(null)
@@ -33,7 +33,6 @@ export default function Chat() {
 
         if (!response.ok) {
             const responseObj = await response.json()
-            console.log(responseObj.erro)
         }
 
         const contactUser = await response.json()
@@ -45,29 +44,12 @@ export default function Chat() {
             wsChat.send(message)
             setMessage('')
         }
-        // const token = Cookies.get('token')
-        // const response = await fetch(BASE_URL_API + '/mensagens', {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //         'text': message,
-        //         'toUserID': contactUser.ID,
-        //     }),
-        //     headers: {
-        //         Authorization: `Bearer ${token}`,
-        //         'Content-Type': 'application/json',
-        //     },
-        // })
-
-        // if (!response.ok) {
-        //     const responseObj = await response.json()
-        //     console.log(responseObj.erro)
-        // }
-
-        // setMessage('')
     }
 
     useEffect(() => {
         if(contactUser) {
+            setWsChat(new WebSocket(`ws://localhost:8000/ws/chat/${user.ID}/${contactUser.ID}`))
+
             const getMessages = async () => {
                 const token = Cookies.get('token')
 
@@ -81,8 +63,6 @@ export default function Chat() {
 
                 const messages = await response.json()
                 setMessages(messages)
-
-                setWsChat(new WebSocket(`ws://localhost:8000/ws/chat/${user.ID}/${contactUser.ID}`))
             }
             getMessages()
         }
@@ -92,19 +72,19 @@ export default function Chat() {
         if (wsChat) {
             wsChat.onopen = () => {
                 console.log("Successfully Connected")
-                    
-                wsChat.onmessage = function(event) {
-                    console.log(event.data)
-                    // setMessages([...messages, newMessage])
-                }
-        
-                wsChat.onclose = (event) => {
-                    console.log("Server Closed Connection: ", event)
-                }
-        
-                wsChat.onerror = (error) => {
-                    console.log("Socket error ", error)
-                }
+            }
+
+            wsChat.onmessage = function(event) {
+                const newMessage = JSON.parse(event.data)
+                setMessages(prevMessages => [...prevMessages, newMessage])
+            }
+    
+            wsChat.onclose = (event) => {
+                console.log("Server Closed Connection: ", event)
+            }
+    
+            wsChat.onerror = (error) => {
+                console.log("Socket error ", error)
             }
         }
     }, [wsChat])
