@@ -20,6 +20,16 @@ export default function Chat() {
     const [message, setMessage] = useState('')
     const [wsChat, setWsChat] = useState(null)
 
+    useEffect(() => {
+        setWsChat(new WebSocket(`ws://localhost:8000/ws/chat`))
+
+        return () => {
+            if (wsChat) {
+                wsChat.close()
+            }
+        }
+    }, [])
+
     async function searchContactUser(id: number) {
         const token = Cookies.get('token')
 
@@ -41,15 +51,21 @@ export default function Chat() {
 
     async function sendMessage() {
         if (wsChat) {
-            wsChat.send(message)
+            const messageData = {
+                user: user.email,
+                message: {
+                    text: message,
+                    fromUserID: user.ID,
+                    toUserID: contactUser.ID,
+                }
+            }
+            wsChat.send(JSON.stringify(messageData))
             setMessage('')
         }
     }
 
     useEffect(() => {
         if(contactUser) {
-            setWsChat(new WebSocket(`ws://localhost:8000/ws/chat/${user.ID}/${contactUser.ID}`))
-
             const getMessages = async () => {
                 const token = Cookies.get('token')
 
@@ -72,10 +88,17 @@ export default function Chat() {
         if (wsChat) {
             wsChat.onopen = () => {
                 console.log("Successfully Connected")
-            }
+                const messageData = {
+                    type: "bootup",
+                    user: user?.email,
+                }
 
+                wsChat.send(JSON.stringify(messageData))
+            }
+    
             wsChat.onmessage = function(event) {
                 const newMessage = JSON.parse(event.data)
+                console.log(newMessage)
                 setMessages(prevMessages => [...prevMessages, newMessage])
             }
     
@@ -87,7 +110,7 @@ export default function Chat() {
                 console.log("Socket error ", error)
             }
         }
-    }, [wsChat])
+    }, [user])
 
     return (
         <>
