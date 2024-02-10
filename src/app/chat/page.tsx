@@ -13,22 +13,49 @@ import useAuth from "@/data/hook/useAuth";
 const BASE_URL_API = process.env.NEXT_PUBLIC_API_URL
 
 export default function Chat() {
-    const { user, setLoading } = useAuth()
+    const wsChat = new WebSocket(`ws://localhost:8000/ws/chat`)
+
+    const { user } = useAuth()
     const [contactListClose, setContactListClose] = useState(true)
     const [contactUser, setContactUser] = useState(null)
     const [messages, setMessages] = useState(null)
     const [message, setMessage] = useState('')
-    const [wsChat, setWsChat] = useState(null)
 
     useEffect(() => {
-        setWsChat(new WebSocket(`ws://localhost:8000/ws/chat`))
-
-        return () => {
-            if (wsChat) {
-                wsChat.close()
+        if (contactUser) {
+            wsChat.onopen = () => {
+                console.log("Successfully Connected")
+                const messageData = {
+                    type: "bootup",
+                    user: user.email,
+                }
+    
+                wsChat.send(JSON.stringify(messageData))
             }
+    
+            wsChat.onmessage = function(event) {
+                const newMessage = JSON.parse(event.data)
+                const isMsgFromUser = newMessage.fromUserID == user.ID && newMessage.toUserID == contactUser.ID
+                const isMsgToUser = newMessage.fromUserID == contactUser.ID && newMessage.toUserID == user.ID
+ 
+                if (isMsgFromUser || isMsgToUser) {
+                    setMessages(prevMessages => [...prevMessages, newMessage])
+                }
+            }
+    
+            wsChat.onclose = (event) => {
+                console.log("Server Closed Connection: ", event)
+            }
+    
+            wsChat.onerror = (error) => {
+                console.log("Socket error ", error)
+            }
+
+            return(() => {
+                wsChat.close()
+            })
         }
-    }, [])
+    }, [contactUser])
 
     async function searchContactUser(id: number) {
         const token = Cookies.get('token')
@@ -50,18 +77,16 @@ export default function Chat() {
     }
 
     async function sendMessage() {
-        if (wsChat) {
-            const messageData = {
-                user: user.email,
-                message: {
-                    text: message,
-                    fromUserID: user.ID,
-                    toUserID: contactUser.ID,
-                }
+        const messageData = {
+            user: user.email,
+            message: {
+                text: message,
+                fromUserID: user.ID,
+                toUserID: contactUser.ID,
             }
-            wsChat.send(JSON.stringify(messageData))
-            setMessage('')
         }
+        wsChat.send(JSON.stringify(messageData))
+        setMessage('')
     }
 
     useEffect(() => {
@@ -83,34 +108,6 @@ export default function Chat() {
             getMessages()
         }
     }, [contactUser])
-
-    useEffect(() => {
-        if (wsChat) {
-            wsChat.onopen = () => {
-                console.log("Successfully Connected")
-                const messageData = {
-                    type: "bootup",
-                    user: user?.email,
-                }
-
-                wsChat.send(JSON.stringify(messageData))
-            }
-    
-            wsChat.onmessage = function(event) {
-                const newMessage = JSON.parse(event.data)
-                console.log(newMessage)
-                setMessages(prevMessages => [...prevMessages, newMessage])
-            }
-    
-            wsChat.onclose = (event) => {
-                console.log("Server Closed Connection: ", event)
-            }
-    
-            wsChat.onerror = (error) => {
-                console.log("Socket error ", error)
-            }
-        }
-    }, [user])
 
     return (
         <>
