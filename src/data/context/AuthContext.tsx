@@ -1,7 +1,6 @@
 import { createContext, useEffect, useState } from "react"
 import Cookies from 'js-cookie'
 import { useRouter } from "next/navigation"
-import axios from 'axios';
 
 type User = {
     ID: number
@@ -17,8 +16,7 @@ type LoginData = {
 type AuthContextProps = {
     user?: User
     loading?: boolean
-    login?: (data: LoginData) => Promise<string>
-    setLoading: (loading: boolean) => void
+    login?: (data: LoginData) => void
 }
 
 
@@ -31,27 +29,27 @@ export function AuthProvider(props) {
     const router = useRouter()
     const [user, setUser] = useState<User | null>(null)
 
-    async function login(data: LoginData): Promise<string> {
-        setLoading(true)
+    async function login(data: LoginData) {
         const response = await fetch(BASE_URL_API + '/login', {
             method: 'POST',
             body: JSON.stringify(data)
         })
-        if (!response.ok) {
-            const responseObj = await response.json()
-            return responseObj.erro
+        
+        const result = await response.json()
+
+        if (response.ok) {
+            const { token, user } = result
+
+            Cookies.set('token', token, {
+                expires: 7/24
+            })
+
+            setUser(user)
+            router.push('/chat')
+        } else {
+            const err = result
+            throw new Error(err.erro)
         }
-        const { token, user } = await response.json()
-
-        Cookies.set('token', token, {
-            expires: 7/24
-        })
-
-        setUser(user)
-
-        router.push('/chat')
-        setLoading(false)
-        return ''
     }
 
     useEffect(() => {
@@ -67,7 +65,7 @@ export function AuthProvider(props) {
                 }
                 })
                 if (!response.ok) {
-                    console.log('ERRO')
+                    router.push('/login')
                 } else {
                     const result = await response.json()
                     setUser(result)
@@ -82,7 +80,7 @@ export function AuthProvider(props) {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login, loading, setLoading}}>
+        <AuthContext.Provider value={{ user, login, loading}}>
             {props.children}
         </AuthContext.Provider>
     )

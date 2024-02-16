@@ -1,36 +1,38 @@
 "use client";
 
 import AuthInput from "@/components/auth/AuthInput"
-import { useState } from "react"
+import { useEffect, useState } from "react";
 import useAuth from "@/data/hook/useAuth";
-
-const BASE_URL_API = process.env.NEXT_PUBLIC_API_URL
 
 export default function Login() {
     const { login } = useAuth()
-    const [erro, setErro] = useState(null)
+    const [erro, setErro] = useState<string | null>(null)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    function showErro(msg: String) {
-        setErro(msg)
-    }
-
-    async function handleLogin(e) {
+    async function handleSubmit(e: any) {
         e.preventDefault()
+
         
         const data = {
             email,
             password
         }
-        const erro = await login(data)
-        console.log(erro)
-        if (erro !== '') {
-            showErro(erro)
+
+        try {
+            await login(data)
+            setErro(null)
+        } catch(erroObj) {
+            setErro(erroObj.message)
         }
+
+        return
     }
 
-    
+    useEffect(() => {
+        console.log(erro)
+    }, [erro])
+
     return (
         <div className="h-screen flex items-center justify-center">
             <div className="flex flex-col items-center justify-center shadow-md h-3/4 w-3/4 xl:w-1/2 bg-gradient-to-b from-indigo-300 to-yellow-200 rounded-lg">
@@ -44,11 +46,11 @@ export default function Login() {
                         <span className="ml-3">{erro}</span>
                     </div>
                 ) : null}
-                <form className="flex flex-col w-3/4" onSubmit={(e) => handleLogin(e)}>
+                <form className="flex flex-col w-3/4" onSubmit={(e) => handleSubmit(e)}>
                     <AuthInput
                         label="E-mail" 
                         tipo="email"
-                        onChange={setEmail}
+                        onChange={setEmail} 
                         valor={email}
                         obrigatorio
                     ></AuthInput>

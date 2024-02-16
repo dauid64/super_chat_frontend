@@ -12,11 +12,7 @@ export default function Cadastro() {
     const [email, setEmail] = useState('')
     const [senha, setPassword] = useState('')
 
-    function showErro(msg: String) {
-        setErro(msg)
-    }
-
-    async function Register(e) {
+    async function Register(e: any) {
         e.preventDefault()
 
         const response = await fetch(BASE_URL_API + "/usuarios", {
@@ -32,10 +28,11 @@ export default function Cadastro() {
             router.push("/chat")
         } else {
             const err = await response.json()
-            showErro(err.erro)
+            setErro(err.erro)
         }
     }
 
+    console.log(erro)
     return (
         <div className="h-screen flex items-center justify-center">
             <div className="flex flex-col items-center justify-center shadow-md h-3/4 w-3/4 xl:w-1/2 bg-gradient-to-b from-indigo-300 to-yellow-200 rounded-lg">
