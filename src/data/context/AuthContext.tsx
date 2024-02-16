@@ -53,27 +53,32 @@ export function AuthProvider(props) {
     }
 
     useEffect(() => {
-        if (Cookies.get('token')) {
+        if (Cookies.get('token') || Cookies.get('token') === '') {
             const token = Cookies.get('token')
             const fetchData = async () => {
-                
-                const response = await fetch(BASE_URL_API + '/recuperar/usuario', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                }
-                })
-                if (!response.ok) {
+                try {
+                    const response = await fetch(BASE_URL_API + '/recuperar/usuario', {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        }
+                        })
+                        if (!response.ok) {
+                            router.push('/login')
+                        } else {
+                            const result = await response.json()
+                            setUser(result)
+                        }
+                        setLoading(false)
+                } catch(e) {
+                    setLoading(false)
+                    Cookies.remove('token')
                     router.push('/login')
-                } else {
-                    const result = await response.json()
-                    setUser(result)
                 }
             }
 
             fetchData()
-            setLoading(false)
         } else {
             setLoading(false)
         }
